@@ -5,6 +5,8 @@ usage: ovn-router COMMAND
 Commands:
   create-router NAME
   connect-switch ROUTER SWITCH SUBNET
+  connect-router ROUTER1 ROUTER1_SUBNET ROUTER2 ROUTER2_SUBNET
+  disconnect-router ROUTER1 ROUTER2
 EOF
 }
 
@@ -48,6 +50,74 @@ type=router options:router-port=$SWITCH_NAME addresses=\"$LRP_MAC\"
 
 }
 
+connect_router () {
+ROUTER1="$1"
+ROUTER1_SUBNET="$2"
+ROUTER2="$3"
+ROUTER2_SUBNET="$4"
+
+if [ -z "$ROUTER1" ] || [ -z "$ROUTER1_SUBNET" ]; then
+echo >&2 "router1 name or subnet not given"
+exit 1
+fi
+
+if [ -z "$ROUTER2" ] || [ -z "$ROUTER2_SUBNET" ]; then
+echo >&2 "router2 name or subnet not given"
+exit 1
+fi
+
+x=`shuf -i 1-99  -n 1`
+y=`shuf -i 1-99  -n 1`
+z=`shuf -i 1-99  -n 1`
+
+ROUTER1_MAC="00:00:00:$x:$y:$z"
+
+lrp1_uuid=`ovn-nbctl -- --id=@lrp create Logical_Router_port \
+name=${ROUTER1}_$ROUTER2 \
+network=$ROUTER1_SUBNET mac=\"$ROUTER1_MAC\" -- \
+add Logical_Router $ROUTER1 ports @lrp`
+
+x=`shuf -i 1-99  -n 1`
+y=`shuf -i 1-99  -n 1`
+z=`shuf -i 1-99  -n 1`
+
+ROUTER2_MAC="00:00:00:$x:$y:$z"
+
+lrp2_uuid=`ovn-nbctl -- --id=@lrp create Logical_Router_port \
+name=${ROUTER2}_$ROUTER1 \
+network=$ROUTER2_SUBNET mac=\"$ROUTER2_MAC\" -- \
+add Logical_Router $ROUTER2 ports @lrp`
+
+ovn-nbctl set logical_router_port $lrp1_uuid peer=$lrp2_uuid
+ovn-nbctl set logical_router_port $lrp2_uuid peer=$lrp1_uuid
+}
+
+disconnect_router () {
+ROUTER1="$1"
+ROUTER2="$2"
+
+if [ -z "$ROUTER1" ] || [ -z "$ROUTER2" ]; then
+echo >&2 "router1 and router2 name not given"
+exit 1
+fi
+
+lrp1_uuid=`ovn-nbctl --data=bare --no-heading --columns=_uuid find logical_router_port name=${ROUTER1}_$ROUTER2`
+lrp2_uuid=`ovn-nbctl --data=bare --no-heading --columns=_uuid find logical_router_port name=${ROUTER2}_$ROUTER1`
+
+if [ -z "$lrp1_uuid" ] || [ -z $lrp2_uuid ]; then
+echo >&2 "failed to fetch uuids of router ports from names"
+exit 1
+fi
+
+ovn-nbctl remove logical_router_port $lrp1_uuid peer $lrp2_uuid
+ovn-nbctl remove logical_router_port $lrp2_uuid peer $lrp1_uuid
+
+ovn-nbctl remove logical_router "$ROUTER1" ports $lrp1_uuid -- destroy logical_router_port $lrp1_uuid 
+ovn-nbctl remove logical_router "$ROUTER2" ports $lrp2_uuid -- destroy logical_router_port $lrp2_uuid
+
+}
+
+
 case $1 in
     "create-router")
         shift
@@ -57,6 +127,16 @@ case $1 in
     "connect-switch")
         shift
         connect_switch "$@"
+        exit 0
+        ;;
+    "connect-router")
+        shift
+        connect_router "$@"
+        exit 0
+        ;;
+    "disconnect-router")
+        shift
+        disconnect_router "$@"
         exit 0
         ;;
     -h | --help)
