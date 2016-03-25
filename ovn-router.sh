@@ -88,8 +88,8 @@ name=${ROUTER2}_$ROUTER1 \
 network=$ROUTER2_SUBNET mac=\"$ROUTER2_MAC\" -- \
 add Logical_Router $ROUTER2 ports @lrp`
 
-ovn-nbctl set logical_router_port $lrp1_uuid peer=$lrp2_uuid
-ovn-nbctl set logical_router_port $lrp2_uuid peer=$lrp1_uuid
+ovn-nbctl set logical_router_port $lrp1_uuid peer=${ROUTER2}_$ROUTER1
+ovn-nbctl set logical_router_port $lrp2_uuid peer=${ROUTER1}_$ROUTER2
 }
 
 disconnect_router () {
@@ -108,9 +108,6 @@ if [ -z "$lrp1_uuid" ] || [ -z $lrp2_uuid ]; then
 echo >&2 "failed to fetch uuids of router ports from names"
 exit 1
 fi
-
-ovn-nbctl remove logical_router_port $lrp1_uuid peer $lrp2_uuid
-ovn-nbctl remove logical_router_port $lrp2_uuid peer $lrp1_uuid
 
 ovn-nbctl remove logical_router "$ROUTER1" ports $lrp1_uuid -- destroy logical_router_port $lrp1_uuid 
 ovn-nbctl remove logical_router "$ROUTER2" ports $lrp2_uuid -- destroy logical_router_port $lrp2_uuid
