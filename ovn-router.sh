@@ -4,7 +4,10 @@ usage: ovn-router COMMAND
 
 Commands:
   create-router NAME
+
   connect-switch ROUTER SWITCH SUBNET
+  disconnect-switch ROUTER SWITCH
+
   connect-router ROUTER1 ROUTER1_SUBNET ROUTER2 ROUTER2_SUBNET
   disconnect-router ROUTER1 ROUTER2
 EOF
@@ -48,6 +51,27 @@ network=$SUBNET mac=\"$LRP_MAC\" -- add Logical_Router $ROUTER_NAME ports @lrp \
 ovn-nbctl set Logical_port rp-"$SWITCH_NAME" \
 type=router options:router-port=$SWITCH_NAME addresses=\"$LRP_MAC\"
 
+}
+
+disconnect_switch () {
+
+ROUTER_NAME="$1"
+SWITCH_NAME="$2"
+
+if [ -z "$ROUTER_NAME" ] || [ -z "$SWITCH_NAME" ]; then
+echo >&2 "router name or switch name not given"
+exit 1
+fi
+
+lrp1_uuid=`ovn-nbctl --data=bare --no-heading --columns=_uuid find logical_router_port name=$SWITCH_NAME`
+
+if [ -z "$lrp1_uuid" ]; then
+echo "no switch with name $SWITCH_NAME connected to $ROUTER_NAME" 
+exit 1
+fi
+
+ovn-nbctl remove Logical_Router $ROUTER_NAME ports $lrp1_uuid -- destroy logical_router_port $lrp1_uuid
+ovn-nbctl lport-del "rp-$SWITCH_NAME"
 }
 
 connect_router () {
@@ -124,6 +148,11 @@ case $1 in
     "connect-switch")
         shift
         connect_switch "$@"
+        exit 0
+        ;;
+    "disconnect-switch")
+        shift
+        disconnect_switch "$@"
         exit 0
         ;;
     "connect-router")
