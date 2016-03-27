@@ -2,6 +2,9 @@ usage () {
     cat << EOF
 usage: ovn-port COMMAND
 
+These commands need to be run on the host where you plan
+to spawn your namespaces.
+
 Commands:
   add-port [--db=tcp:IP:6640] LSWITCH LPORT_NAME IP/MASK GATEWAY
   del-port [--db=tcp:IP:6640] LPORT_NAME
