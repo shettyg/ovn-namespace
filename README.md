@@ -34,8 +34,7 @@ cp debian/openvswitch-switch.init /etc/init.d/openvswitch-switch
 * Start OVN central components
 
 ```
-ovs-appctl -t ovsdb-server ovsdb-server/add-remote ptcp:6640
-/usr/share/openvswitch/scripts/ovn-ctl start_northd
+/usr/share/openvswitch/scripts/ovn-ctl restart_northd
 ```
 
 * One time setup on each host
@@ -56,7 +55,7 @@ support in upstream Linux.  You can verify whether you have the support in your
 kernel by doing a "lsmod | grep $ENCAP_TYPE".)
 
 ```
-ovs-vsctl set Open_vSwitch . external_ids:ovn-remote="tcp:$CENTRAL_IP:6640" \
+ovs-vsctl set Open_vSwitch . external_ids:ovn-remote="tcp:$CENTRAL_IP:6642" \
   external_ids:ovn-encap-ip=$LOCAL_IP external_ids:ovn-encap-type="$ENCAP_TYPE"
 ```
 
