@@ -10,7 +10,7 @@ usage: case1.sh COMMAND
 
 Commands:
   host1 Run commands for host1. This host has northd running.
-  host2 --db=tcp:IP:6640 Run commands for host2
+  host2 --db=tcp:IP:6641 Run commands for host2
 EOF
 }
 
