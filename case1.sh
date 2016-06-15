@@ -13,14 +13,14 @@ EOF
 
 host1 () {
 sh ovn-router.sh create-router R1
-ovn-nbctl lswitch-add foo
-ovn-nbctl lswitch-add bar
+ovn-nbctl ls-add foo
+ovn-nbctl ls-add bar
 sh ovn-router.sh connect-switch R1 foo 192.168.1.1/24
 sh ovn-router.sh connect-switch R1 bar 192.168.2.1/24
 
 sh ovn-router.sh create-router R2
-ovn-nbctl lswitch-add alice
-ovn-nbctl lswitch-add bob
+ovn-nbctl ls-add alice
+ovn-nbctl ls-add bob
 sh ovn-router.sh connect-switch R2 alice 172.16.1.1/24
 sh ovn-router.sh connect-switch R2 bob 172.16.2.1/24
 

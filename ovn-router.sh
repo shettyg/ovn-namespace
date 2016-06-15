@@ -46,9 +46,9 @@ LRP_MAC="00:00:00:$x:$y:$z"
 
 lrp_uuid=`ovn-nbctl -- --id=@lrp create Logical_Router_port name=$SWITCH_NAME \
 network=$SUBNET mac=\"$LRP_MAC\" -- add Logical_Router $ROUTER_NAME ports @lrp \
--- lport-add $SWITCH_NAME rp-"$SWITCH_NAME"`
+-- lsp-add $SWITCH_NAME rp-"$SWITCH_NAME"`
 
-ovn-nbctl set Logical_port rp-"$SWITCH_NAME" \
+ovn-nbctl set Logical_switch_port rp-"$SWITCH_NAME" \
 type=router options:router-port=$SWITCH_NAME addresses=\"$LRP_MAC\"
 
 }

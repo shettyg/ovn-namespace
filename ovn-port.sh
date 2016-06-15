@@ -62,16 +62,16 @@ z=`shuf -i 1-99  -n 1`
 MAC="00:02:03:$x:$y:$z"
 
 if [ -n "$DB" ]; then
-    ovn-nbctl --db=$DB lport-add $LSWITCH $LPORT_NAME
+    ovn-nbctl --db=$DB lsp-add $LSWITCH $LPORT_NAME
 else
-    ovn-nbctl lport-add $LSWITCH $LPORT_NAME
+    ovn-nbctl lsp-add $LSWITCH $LPORT_NAME
 fi
 
 IP_ONLY=`echo $IP | awk -F \/ '{print $1}'`
 if [ -n "$DB" ]; then
-    ovn-nbctl --db=$DB lport-set-addresses $LPORT_NAME "$MAC $IP_ONLY"
+    ovn-nbctl --db=$DB lsp-set-addresses $LPORT_NAME "$MAC $IP_ONLY"
 else
-    ovn-nbctl lport-set-addresses $LPORT_NAME "$MAC $IP_ONLY"
+    ovn-nbctl lsp-set-addresses $LPORT_NAME "$MAC $IP_ONLY"
 fi
 
 ip netns add $LPORT_NAME
