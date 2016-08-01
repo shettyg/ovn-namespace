@@ -72,8 +72,8 @@ Creating a simple topology with OVN using namespaces.
 * Create logical switches "foo" and "bar"
 
 ```
-ovn-nbctl lswitch-add foo
-ovn-nbctl lswitch-add bar
+ovn-nbctl ls-add foo
+ovn-nbctl ls-add bar
 ```
 
 * Create a router "router"
