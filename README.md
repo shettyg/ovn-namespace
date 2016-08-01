@@ -15,6 +15,11 @@ make install
 * Insert kernel modules 
 
 ```
+rmmod openvswitch
+modprobe libcrc32c
+modprobe nf_conntrack_ipv6
+modprobe nf_nat_ipv6
+modprobe gre
 insmod ./datapath/linux/openvswitch.ko
 insmod ./datapath/linux/vport-geneve.ko
 ```
