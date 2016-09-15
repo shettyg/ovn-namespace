@@ -25,8 +25,8 @@ sh ovn-router.sh connect-switch R2 alice 172.16.1.1/24
 sh ovn-router.sh connect-switch R2 bob 172.16.2.1/24
 
 sh ovn-router.sh connect-router R1 20.0.0.1/24 R2 20.0.0.2/24
-ovn-nbctl set Logical_Router R1 default_gw="20.0.0.2"
-ovn-nbctl set Logical_Router R2 default_gw="20.0.0.1"
+ovn-nbctl lr-route-add R1 0.0.0.0/0 20.0.0.2
+ovn-nbctl lr-route-add R2 0.0.0.0/0 20.0.0.1
 
 sh ovn-port.sh add-port foo foo1 192.168.1.2/24 192.168.1.1
 sh ovn-port.sh add-port alice alice1 172.16.1.2/24 172.16.1.1
