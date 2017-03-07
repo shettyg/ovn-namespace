@@ -42,6 +42,13 @@ cp debian/openvswitch-switch.init /etc/init.d/openvswitch-switch
 /usr/share/openvswitch/scripts/ovn-ctl restart_northd
 ```
 
+Open up TCP ports.
+
+```
+ovn-nbctl set-connection ptcp:6641
+ovn-sbctl set-connection ptcp:6642
+```
+
 * One time setup on each host
 On each host, where you plan to spawn your containers, you will need to
 run the following command once.  (You need to run it again if your OVS database
