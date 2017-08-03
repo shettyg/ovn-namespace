@@ -7,7 +7,7 @@ Installing OVN from source
 
 ```
 ./boot.sh
-./configure --prefix=/usr --localstatedir=/var  --sysconfdir=/etc --enable-ssl --with-linux=/lib/modules/`uname -r`/build
+./configure --prefix=/usr --localstatedir=/usr/local/var  --sysconfdir=/etc --enable-ssl --with-linux=/lib/modules/`uname -r`/build
 make -j3
 make install
 ```
